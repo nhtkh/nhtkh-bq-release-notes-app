@@ -17,7 +17,7 @@ A modern, fast, and feature-rich single-page dashboard built with **Python Flask
   - Select multiple cards to compile a bulleted batch-update summary.
 - **📋 Utility Copy Tools**: Quick actions on each update card to copy the official permalink link or the sanitized plain-text description directly to the clipboard.
 - **📊 Smart CSV Export**: Export release notes to a standard CSV file with automated quote-escaping. If updates are selected, it exports only the selection. Otherwise, it exports all currently visible (filtered/searched) updates.
-- **📱 Responsive Glassmorphic UI**: High-fidelity dark mode with clean typography, dynamic card scale transitions, and custom scrollbars.
+- **📱 Responsive Themeable UI**: High-fidelity dark and light modes toggleable instantly via a header button. It uses adaptive native CSS variables, persistent selection caching (stored in local storage), clean typography, card scale zoom animations, and custom scrollbars.
 
 ---
 
