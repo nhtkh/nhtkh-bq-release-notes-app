@@ -15,7 +15,8 @@ A modern, fast, and feature-rich single-page dashboard built with **Python Flask
   - Generates pre-formatted tweets including the date, type, plain-text summary, and official documentation permalink.
   - Interactive modal with a custom SVG character counter progress ring tracking Twitter's 280-character limit (warns and blocks submission on overflow).
   - Select multiple cards to compile a bulleted batch-update summary.
-- **🔗 Link Sharing**: One-click quick action to copy documentation permalinks straight to the clipboard.
+- **📋 Utility Copy Tools**: Quick actions on each update card to copy the official permalink link or the sanitized plain-text description directly to the clipboard.
+- **📊 Smart CSV Export**: Export release notes to a standard CSV file with automated quote-escaping. If updates are selected, it exports only the selection. Otherwise, it exports all currently visible (filtered/searched) updates.
 - **📱 Responsive Glassmorphic UI**: High-fidelity dark mode with clean typography, dynamic card scale transitions, and custom scrollbars.
 
 ---
