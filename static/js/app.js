@@ -33,6 +33,7 @@ const progressRing = document.getElementById('progress-ring');
 // Toast Elements
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toast-message');
+const toastCloseBtn = document.getElementById('toast-close-btn');
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
 /* --- Initialize Dashboard --- */
@@ -55,6 +56,9 @@ function setupEventListeners() {
         const isLight = document.body.classList.contains('light-theme');
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
     });
+
+    // Toast close button
+    toastCloseBtn.addEventListener('click', hideToast);
 
     // Refresh button
     refreshBtn.addEventListener('click', () => {
@@ -477,6 +481,12 @@ function executeTweet() {
 
 /* --- Toast Notification Helper --- */
 let toastTimeout;
+
+function hideToast() {
+    toast.classList.add('hidden');
+    clearTimeout(toastTimeout);
+}
+
 function showToast(message, type = 'success') {
     clearTimeout(toastTimeout);
     
@@ -496,9 +506,12 @@ function showToast(message, type = 'success') {
     
     toast.classList.remove('hidden');
     
-    toastTimeout = setTimeout(() => {
-        toast.classList.add('hidden');
-    }, 4000);
+    // Standard notifications auto-hide after 5 seconds, errors persist
+    if (type !== 'error') {
+        toastTimeout = setTimeout(() => {
+            hideToast();
+        }, 5000);
+    }
 }
 
 /* --- Clipboard Helper --- */

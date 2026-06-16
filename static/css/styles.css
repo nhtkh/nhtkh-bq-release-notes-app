@@ -1028,7 +1028,7 @@ body.light-theme .icon-moon { display: block; }
     border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     z-index: 110;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
@@ -1044,6 +1044,26 @@ body.light-theme .icon-moon { display: block; }
 
 .toast-icon {
     font-size: 16px;
+}
+
+.toast-close-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: var(--transition-fast);
+}
+
+.toast-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
 /* Responsive adjustments */
