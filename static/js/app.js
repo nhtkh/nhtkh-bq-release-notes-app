@@ -17,6 +17,7 @@ const lastSyncTime = document.getElementById('last-sync-time');
 // Selection Actions
 const selectedCount = document.getElementById('selected-count');
 const tweetSelectedBtn = document.getElementById('tweet-selected-btn');
+const exportCsvBtn = document.getElementById('export-csv-btn');
 const clearSelectedBtn = document.getElementById('clear-selected-btn');
 
 // Modal Elements
@@ -73,6 +74,7 @@ function setupEventListeners() {
     // Selection buttons
     clearSelectedBtn.addEventListener('click', clearSelection);
     tweetSelectedBtn.addEventListener('click', openBatchTweetModal);
+    exportCsvBtn.addEventListener('click', exportToCSV);
 
     // Modal controls
     closeModalBtn.addEventListener('click', closeTweetModal);
@@ -226,8 +228,11 @@ function renderTimeline() {
                     ${note.content}
                 </div>
                 <div class="card-actions">
-                    <button class="card-action-btn copy-btn" data-url="${note.link}">
+                    <button class="card-action-btn copy-link-btn" data-url="${note.link}">
                         <i class="fa-solid fa-link"></i> Copy Link
+                    </button>
+                    <button class="card-action-btn copy-text-btn" data-id="${note.id}">
+                        <i class="fa-solid fa-copy"></i> Copy Text
                     </button>
                     <button class="card-action-btn tweet-btn" data-id="${note.id}">
                         <i class="fa-brands fa-x-twitter"></i> Tweet
@@ -244,9 +249,19 @@ function renderTimeline() {
             });
             
             // Add copy link button listener
-            card.querySelector('.copy-btn').addEventListener('click', (e) => {
+            card.querySelector('.copy-link-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 copyToClipboard(e.currentTarget.dataset.url, 'Link copied to clipboard!');
+            });
+            
+            // Add copy text button listener
+            card.querySelector('.copy-text-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const noteId = e.currentTarget.dataset.id;
+                const note = releaseNotes.find(n => n.id === noteId);
+                if (note) {
+                    copyToClipboard(note.plain_text, 'Update text copied to clipboard!');
+                }
             });
             
             // Add individual tweet button listener
@@ -510,4 +525,64 @@ function fallbackCopy(text, successMessage) {
         showToast('Copy failed', 'error');
     }
     document.body.removeChild(textArea);
+}
+
+/* --- CSV Export Helper --- */
+function exportToCSV() {
+    let notesToExport = [];
+    let exportSource = '';
+    
+    if (selectedNoteIds.size > 0) {
+        notesToExport = releaseNotes.filter(note => selectedNoteIds.has(note.id));
+        exportSource = 'selected';
+    } else {
+        notesToExport = releaseNotes.filter(note => {
+            const matchesFilter = currentFilter === 'all' || note.type === currentFilter;
+            const matchesSearch = !searchQuery || 
+                note.plain_text.toLowerCase().includes(searchQuery) ||
+                note.date.toLowerCase().includes(searchQuery) ||
+                note.type.toLowerCase().includes(searchQuery);
+            return matchesFilter && matchesSearch;
+        });
+        exportSource = 'filtered';
+    }
+    
+    if (notesToExport.length === 0) {
+        showToast('No notes available to export', 'error');
+        return;
+    }
+    
+    // Build CSV rows
+    const rows = [
+        ['Date', 'Type', 'Description', 'Link']
+    ];
+    
+    notesToExport.forEach(note => {
+        rows.push([note.date, note.type, note.plain_text, note.link]);
+    });
+    
+    // Convert to CSV string with proper escaping
+    const csvContent = rows.map(row => 
+        row.map(value => {
+            const stringValue = String(value);
+            const escaped = stringValue.replace(/"/g, '""');
+            if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n') || escaped.includes('\r')) {
+                return `"${escaped}"`;
+            }
+            return escaped;
+        }).join(',')
+    ).join('\r\n');
+    
+    // Create blob and download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `bigquery_release_notes_${exportSource}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast(`Exported ${notesToExport.length} ${exportSource} updates to CSV!`);
 }
