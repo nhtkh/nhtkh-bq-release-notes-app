@@ -33,9 +33,15 @@ const progressRing = document.getElementById('progress-ring');
 // Toast Elements
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toast-message');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
 /* --- Initialize Dashboard --- */
 document.addEventListener('DOMContentLoaded', () => {
+    // Check saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+    }
     fetchReleaseNotes();
     setupEventListeners();
     initProgressRing();
@@ -43,6 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* --- Event Listeners Setup --- */
 function setupEventListeners() {
+    // Theme toggle
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+        const isLight = document.body.classList.contains('light-theme');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+
     // Refresh button
     refreshBtn.addEventListener('click', () => {
         fetchReleaseNotes(true);
